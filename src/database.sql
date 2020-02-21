@@ -1,7 +1,7 @@
 CREATE TABLE "products" (
   "id" SERIAL PRIMARY KEY,
-  "category_id" int UNIQUE,
-  "user_id" int UNIQUE,
+  "category_id" int NOT NULL,
+  "user_id" int,
   "name" text NOT NULL,
   "description" text NOT NULL,
   "old_price" int,

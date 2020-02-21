@@ -1,7 +1,7 @@
 const express = require('express')
 const nunjucks = require('nunjucks')
 const methodOverride = require('method-override')
-const router = require('./router/routers')
+const route = require('./route/routes')
 
 const server = express()
 
@@ -14,7 +14,7 @@ server.use(express.static('public'))
 //Sobrescrever as rotas para o método put e delete
 server.use(methodOverride('_method'))
 //Leitura de rotas
-server.use(router)
+server.use(route)
 
 server.set('view engine', 'njk')
 
