@@ -1,3 +1,5 @@
+
+
 <div class="item">
   <div>Categoria</div>
   <div>
@@ -29,8 +31,8 @@
 <div class="item">
   <div>Preço</div>
   <div>
-    <input type="text" name="price" placeholder="valor do produto" 
-    value="{{ product.price }}">
+    <input type="text" name="price" placeholder="valor do produto"
+    onkeydown="Mask.apply(this, 'formatBRL')">
   </div>
   {% if product.old_price %}
     <input type="hidden" name="old_price" value="{{product.old_price}}">
