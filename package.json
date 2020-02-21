@@ -7,6 +7,7 @@
     "start": "npm-run-all -p nodemon browserSync",
     "nodemon": "nodemon src/server.js",
     "browserSync": "browser-sync start --proxy 'http://localhost:5000' --files 'public/* , src/app/views/*'"
+    
   },
   "keywords": [],
   "author": "",

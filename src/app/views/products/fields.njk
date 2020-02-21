@@ -2,6 +2,7 @@
   <div>Categoria</div>
   <div>
     <select name="category_id">
+    <option value=""></option>
     {% for category in categories %}
       <option value="{{category.id}}" {% if product.category_id == category.id %} selected {%endif%}>
       {{category.name}}</option>
@@ -11,7 +12,7 @@
 </div>
 
 <div class="item">
-  <div>Name</div>
+  <div>Título</div>
   <div>
     <input type="text" name="name" placeholder="Digite o título do anúncio" 
     value="{{ product.name }}">
@@ -26,7 +27,7 @@
 {# Campo para foto #}
 
 <div class="item">
-  <div>Valor</div>
+  <div>Preço</div>
   <div>
     <input type="text" name="price" placeholder="valor do produto" 
     value="{{ product.price }}">
@@ -63,4 +64,5 @@
   </div>
 </div>
 {%endif%}
+
 

@@ -125,7 +125,7 @@ section.form {
   background-color: #fff;
   padding: 32px 24px;
   margin: 32px auto;
-  box-shadow: 2px 2px 2px -4px rgba(60, 60, 60, 0.9);
+  box-shadow: 2px 2px 2px -4px rgba(60, 60, 60, .9);
   border: 1px solid #efefef;
   border-radius: 4px;
   max-width: 700px;
@@ -160,7 +160,7 @@ form .item textarea,
 form .item select {
   width: 100%;
   padding: 8px 16px;
-  box-shadow: 2px 2px 2px -2px rgba(51, 33, 33, 0.2);
+  box-shadow: 2px 2px 2px 1px rgba(51, 33, 33, .1);
   border: 1px solid #efefef;
   border-radius: 4px;
   font-size: 16px;
