@@ -26,7 +26,18 @@
     <textarea name="description">{{product.description}}</textarea>
 </div>
 
-{# Campo para foto #}
+<div class="item">
+  <div>Fotos</div>
+  <div>
+    <div id="photos-upload">
+      <input type="file" id="photos-input" name="photos" multiple accept="image/*"
+      onchange="PhotosUpload.handleFileInput(event)">
+      <p>Selecione até 6 fotos</p>
+    </div>
+    <div id="photos-preview"></div>
+
+  </div>
+</div>
 
 <div class="item">
   <div>Preço</div>
@@ -38,7 +49,7 @@
     <input type="hidden" name="old_price" value="{{product.old_price}}">
   {%endif%}
 </div>
-{#Fazer máscara para conversão de moeda no campo acima #}
+
 
 <div class="item">
 <div>Quantidade</div>
