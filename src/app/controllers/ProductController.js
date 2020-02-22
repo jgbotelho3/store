@@ -50,7 +50,7 @@ module.exports = {
     for (key of keys) {
       if (req.body[key] == '') {
         error = 'Preencha todos os campos'
-        return res.redirect(`/products/${req.body.id}/edit`, { error })
+        return res.render(`products/edit`, { error })
       }
     }
 
