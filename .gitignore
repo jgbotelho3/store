@@ -105,3 +105,9 @@ dist
 
 # Package-lock JSON
 package-lock.json
+
+# Upload images
+public/uploads/
+
+# VsCode File
+.vscode
