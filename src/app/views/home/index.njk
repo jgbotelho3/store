@@ -1,0 +1,7 @@
+{% extends 'layout.njk' %}
+{% import '_parts/section-products.njk' as section %}
+
+{% block content %}
+
+{{section.products('Últimos produtos', 'container', products)}}
+{% endblock content %}
