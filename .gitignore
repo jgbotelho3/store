@@ -113,4 +113,4 @@ public/uploads/
 .vscode
 
 # Database credentials
-src/config/db.js
+src/config/
