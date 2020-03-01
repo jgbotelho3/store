@@ -6,9 +6,8 @@
      <title>Store</title>
     {% endblock %}
 
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/favicon.ico" />
-    <link rel="stylesheet" href="/style.css">
+    {% include '_parts/styles.njk' %}
+    
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -16,6 +15,8 @@
   </head>
 
   <body>
+
+    {% include '_parts/messages.njk'%}
 
     {% include '_parts/header.njk' %}
 

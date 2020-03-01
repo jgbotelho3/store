@@ -12,6 +12,41 @@ const Mask = {
       style: 'currency',
       currency: 'BRL'
     }).format(value / 100)
+  },
+
+  cpfCnpj (value) {
+    value = value.replace(/\D/g, '')
+
+    const cpfCnpjFieldLength = 14
+    if (value.length > cpfCnpjFieldLength) {
+      value = value.slice(0, -1)
+    }
+
+    if (value.length > 11) {
+      value = value.replace(/(\d{2})(\d)/, '$1.$2')
+      value = value.replace(/(\d{3})(\d)/, '$1.$2')
+      value = value.replace(/(\d{3})(\d)/, '$1/$2')
+      value = value.replace(/(\d{4})(\d)/, '$1-$2')
+    } else {
+      value = value.replace(/(\d{3})(\d)/, '$1.$2')
+      value = value.replace(/(\d{3})(\d)/, '$1.$2')
+      value = value.replace(/(\d{3})(\d)/, '$1-$2')
+    }
+
+    return value
+  },
+
+  cep (value) {
+    value = value.replace(/\D/g, '')
+
+    const cepFieldLength = 8
+
+    if (value.length > cepFieldLength) {
+      value = value.slice(0, -1)
+    }
+
+    value = value.replace(/(\d{5})(\d)/, '$1-$2')
+    return value
   }
 }
 
@@ -49,7 +84,7 @@ const PhotosUpload = {
 
   hasLimit (event) {
     const { uploadLimit, input, preview } = PhotosUpload
-    const { files: fileList} = input
+    const { files: fileList } = input
 
     if (fileList.length > uploadLimit) {
       alert(`O número máximo de fotos permitidas são ${uploadLimit}`)
@@ -117,20 +152,18 @@ const PhotosUpload = {
     photoDiv.remove()
   },
 
-  removeOldPhoto(event){
-
+  removeOldPhoto (event) {
     const photoDiv = event.target.parentNode
 
-    if(photoDiv.id){
+    if (photoDiv.id) {
       const removedFiles = document.querySelector('input[name="removed_files"]')
 
-      if(removedFiles){
+      if (removedFiles) {
         removedFiles.value += `${photoDiv.id},`
       }
     }
 
     photoDiv.remove()
-
   }
 }
 
@@ -138,7 +171,7 @@ const ImageGallery = {
   highlight: document.querySelector('.gallery .highlight > img'),
   previews: document.querySelectorAll('.gallery-preview img'),
 
-  setImage(e){
+  setImage (e) {
     const { target } = e
 
     ImageGallery.previews.forEach(preview => preview.classList.remove('active'))
@@ -154,16 +187,83 @@ const Lightbox = {
   image: document.querySelector('.lightbox-target img'),
   closeButton: document.querySelector('lightbox-target a.lightbox-close'),
 
-  open(){
+  open () {
     Lightbox.target.style.opacity = 1
     Lightbox.target.style.top = 0
     Lightbox.closeButton.style.top = 0
   },
 
-  close(){
+  close () {
     Lightbox.target.style.opacity = 0
     Lightbox.target.style.top = '-100%'
     Lightbox.closeButton.style.top = '-80px'
-    
+  }
+}
+
+const Validate = {
+  apply (input, func) {
+    Validate.clearErrors(input)
+    let results = Validate[func](input.value)
+    input.value = results.value
+
+    if (results.error) Validate.displayError(input, results.error)
+  },
+
+  displayError (input, error) {
+    const div = document.createElement('div')
+    div.classList.add('error')
+    div.innerHTML = error
+    input.parentNode.appendChild(div)
+    input.focus()
+  },
+
+  clearErrors (input) {
+    const errorDiv = input.parentNode.querySelector('.error')
+
+    if (errorDiv) errorDiv.remove()
+  },
+
+  isEmail (value) {
+    let error = null
+
+    const mailFormat = /^\w+([\.-_]?\w+)*@\w+([\.-_]?\w+)*(\.\w{2,3})+$/
+
+    if (!value.match(mailFormat)) error = 'Email inválido'
+
+    return {
+      error,
+      value
+    }
+  },
+
+  isCpfCnpj (value) {
+    let error = null
+
+    const cleanValues = value.replace(/\D/g, '')
+
+    if (cleanValues.length > 11 && cleanValues.length !== 14) {
+      error = 'CNPJ inválido'
+    } else if (cleanValues.length < 12 && cleanValues.length !== 11) {
+      error = 'CPF incorreto'
+    }
+
+    return {
+      error,
+      value
+    }
+  },
+
+  isCep (value) {
+    let error = null
+    const cleanValues = value.replace(/\D/g, '')
+
+    if(cleanValues.length !== 8){
+      error = 'CEP inválido'
+    }
+
+    return {
+      error,
+      value
+    }
   }
 }
