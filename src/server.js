@@ -2,8 +2,11 @@ const express = require('express')
 const nunjucks = require('nunjucks')
 const methodOverride = require('method-override')
 const route = require('./route')
+const session = require('./config/session')
 
 const server = express()
+
+server.use(session)
 
 //Leitura do body - form post
 server.use(express.urlencoded({ extended: true }))
