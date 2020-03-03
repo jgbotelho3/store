@@ -41,6 +41,7 @@ module.exports = {
       })
 
       return res.render('user/index', {
+        user: req.body,
         success: 'Conta atualizada com sucesso!!!'
       })
 
