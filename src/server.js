@@ -8,6 +8,11 @@ const server = express()
 
 server.use(session)
 
+server.use((req, res, next) => {
+    res.locals.session = req.session
+    next()
+})
+
 //Leitura do body - form post
 server.use(express.urlencoded({ extended: true }))
 
