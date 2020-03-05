@@ -26,13 +26,13 @@ module.exports = {
     data.price = data.price.replace(/\D/g, '')
     const values = [
       data.category_id,
-      data.user_id || 1,
+      data.user_id,
       data.name,
       data.description,
       data.old_price || data.price,
       data.price,
       data.quantity,
-      data.status || 1
+      data.status
     ]
 
     return db.query(query, values)
@@ -48,19 +48,17 @@ module.exports = {
     const query = `
       UPDATE products SET 
         category_id = ($1),
-        user_id = ($2),
-        name = ($3),
-        description = ($4),
-        old_price = ($5),
-        price = ($6),
-        quantity = ($7),
-        status = ($8),
+        name = ($2),
+        description = ($3),
+        old_price = ($4),
+        price = ($5),
+        quantity = ($6),
+        status = ($7),
         updated_at = now()
-        WHERE id = ($9)
+        WHERE id = ($8)
     `
     const values = [
       product.category_id,
-      product.user_id || 1,
       product.name,
       product.description,
       product.old_price,

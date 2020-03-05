@@ -6,22 +6,22 @@ const UserValidator = require('../app/validators/user')
 const SessionValidator = require('../app/validators/session')
 const { onlyUsers, isLogged } = require('../app/middlewares/session')
 
-// //Login
+//Login
 routes.get('/login', isLogged, SessionController.loginForm)
 routes.post('/login', SessionValidator.login, SessionController.login)
 routes.post('/logout', SessionController.logout)
 
-// //Reset Password / Forgot
+//Reset Password / Forgot
 routes.get('/forgot-password', SessionController.forgotForm)
 routes.post('/forgot-password', SessionValidator.forgot, SessionController.forgot)
 routes.get('/password-reset', SessionController.resetForm)
 routes.post('/reset-password', SessionValidator.reset, SessionController.reset)
 
-// //User register
+//User register
 routes.get('/register', UserController.registerForm)
 routes.post('/register', UserValidator.post, UserController.post)
 routes.get('/', onlyUsers, UserValidator.show, UserController.show)
 routes.put('/', UserValidator.update, UserController.update)
-// routes.delete('/register', UserController.delete)
+routes.delete('/', UserController.delete)
 
 module.exports = routes
