@@ -45,6 +45,9 @@ CREATE TABLE "users" (
   "updated_at" timestamp DEFAULT 'now()'
 );
 
+ALTER TABLE "users" ADD COLUMN reset_token text;
+ALTER TABLE "users" ADD COLUMN reset_token_expires text;
+
 -- FOREIGN KEY
 ALTER TABLE "products" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 

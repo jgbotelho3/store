@@ -53,7 +53,7 @@ module.exports = {
   },
 
   async update(id, fields){
-    console.log('entrei na função que busca no banco')
+
     let query = 'UPDATE users SET'
 
     Object.keys(fields).map((key, index, array) =>{
