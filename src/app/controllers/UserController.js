@@ -1,4 +1,8 @@
+const { hash } = require('bcryptjs')
+const { unlinkSync } = require('fs')
 const User = require('../models/User')
+const Product = require('../models/Product')
+
 const { formatCep, formatCpfCnpj } = require('../../lib/utils')
 
 module.exports = {
@@ -7,27 +11,46 @@ module.exports = {
   },
 
   async show (req, res) {
-    const { user } = req
+    try {
+      const { user } = req
 
-    user.cpf_cnpj = formatCpfCnpj(user.cpf_cnpj)
-    user.cep = formatCep(user.cep)
+      user.cpf_cnpj = formatCpfCnpj(user.cpf_cnpj)
+      user.cep = formatCep(user.cep)
 
-    return res.render('user/index', { user })
+      return res.render('user/index', { user })
+    } catch (err) {
+      console.log(err)
+    }
   },
 
   async post (req, res) {
-    const userId = await User.create(req.body)
+    try {
+      let { name, email, password, cpf_cnpj, cep, address } = req.body
 
-    req.session.userId = userId
+      password = await hash(password, 8)
+      cpf_cnpj = cpf_cnpj.replace(/\D/g, '')
+      cep = cep.replace(/\D/g, '')
+      const userId = await User.create({
+        name,
+        email,
+        password,
+        cpf_cnpj,
+        cep,
+        address
+      })
 
-    return res.redirect('/users')
+      req.session.userId = userId
+
+      return res.redirect('/users')
+    } catch (err) {
+      console.error(err)
+    }
   },
 
-  async update(req, res){
-    try{
-
-      const {user} = req
-      let {name, email, cpf_cnpj, cep, address} = req.body
+  async update (req, res) {
+    try {
+      const { user } = req
+      let { name, email, cpf_cnpj, cep, address } = req.body
 
       cpf_cnpj = cpf_cnpj.replace(/\D/g, '')
       cep = cep.replace(/\D/g, '')
@@ -44,8 +67,7 @@ module.exports = {
         user: req.body,
         success: 'Conta atualizada com sucesso!!!'
       })
-
-    }catch(err){
+    } catch (err) {
       console.error(err)
       return res.render('user/index', {
         error: 'Algo deu errado'
@@ -53,19 +75,32 @@ module.exports = {
     }
   },
 
-  async delete(req, res){
+  async delete (req, res) {
+    try {
+      const products = await Product.findAll({
+        where: { user_id: req.body.id }
+      })
 
-    try{
+      const allFilesPromise = products.map(product => Product.files(product.id))
+
+      let promiseResults = await Promise.all(allFilesPromise)
 
       await User.delete(req.body.id)
-
       req.session.destroy()
 
+      promiseResults.map(files => {
+        files.map(file => {
+          try {
+            unlinkSync(file.path)
+          } catch (err) {
+            console.error(err)
+          }
+        })
+      })
       return res.render('session/login', {
         success: 'Conta desativada com sucesso! Até breve'
       })
-
-    }catch(err){
+    } catch (err) {
       console.error(err)
       return res.render('user/index', {
         user: req.body,

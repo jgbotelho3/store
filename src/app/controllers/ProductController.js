@@ -1,151 +1,196 @@
+const { unlinkSync } = require('fs')
 const Category = require('../models/Category')
 const Product = require('../models/Product')
 const File = require('../models/File')
 const { formatPrice, date } = require('../../lib/utils')
 
 module.exports = {
-  create (req, res) {
-    Category.all()
-      .then(results => {
-        const categories = results.rows
-        return res.render('products/create.njk', { categories })
-      })
-      .catch(err => {
-        throw new Error(err)
-      })
+  async create (req, res) {
+    try {
+      const categories = await Category.findAll()
+      return res.render('products/create', { categories })
+    } catch (err) {
+      console.error(err)
+    }
   },
 
   async post (req, res) {
-    const keys = Object.keys(req.body)
-    let error = ''
-    for (key of keys) {
-      if (req.body[key] == '') {
-        return res.send('Preencha todos os campos')
+    try {
+      const keys = Object.keys(req.body)
+      let error = ''
+      for (key of keys) {
+        if (req.body[key] == '') {
+          return res.send('Preencha todos os campos')
+        }
       }
-    }
 
-    if (req.files.length == 0) return res.send('Please send at least an image')
+      if (req.files.length == 0)
+        return res.send('Please send at least an image')
 
-    req.body.user_id = req.session.userId
-    let results = await Product.create(req.body)
-    const productId = results.rows[0].id
+      let {
+        category_id,
+        name,
+        description,
+        old_price,
+        price,
+        quantity,
+        status
+      } = req.body
 
-    const filesPromise = req.files.map(file =>
-      File.create({
-        ...file,
-        product_id: productId
+      price = price.replace(/\D/g, '')
+     
+      const product_id = await Product.create({
+        category_id,
+        user_id: req.session.userId,
+        name,
+        description,
+        old_price: old_price || price,
+        price,
+        quantity,
+        status: status || 1
       })
-    )
 
-    await Promise.all(filesPromise)
+      const filesPromise = req.files.map(file =>
+        File.create({
+          name: file.filename,
+          path: file.path,
+          product_id
+        })
+      )
 
-    return res.redirect(`/products/${productId}/edit`)
-  },
- 
-  async show(req, res){
+      await Promise.all(filesPromise)
 
-    let results = await Product.find(req.params.id)
-    const product = results.rows[0]
-
-    if(!product) return res.send('product not found!!!')
-    
-
-    results = await Product.files(product.id)
-    const files = results.rows.map(file => ({
-      ...file,
-      src: `${req.protocol}://${req.headers.host}${file.path.replace('public', '')}`
-    }))
-
-
-    const { month, day, hour, minutes } = date(product.updated_at)
-
-    product.published = {
-      day: `${day}/${month}`,
-      hour: `${hour}h${minutes}min`
+      return res.redirect(`/products/${product_id}/edit`)
+    } catch (err) {
+      console.error(err)
     }
+  },
 
-    product.oldPrice = formatPrice(product.old_price)
-    product.price = formatPrice(product.price)
+  async show (req, res) {
+    try {
+      const product = await Product.find(req.params.id)
 
-      return res.render('products/show', {product, files})
+      if (!product) return res.send('product not found!!!')
+
+      let files = await Product.files(product.id)
+      files = files.map(file => ({
+        ...file,
+        src: `${req.protocol}://${req.headers.host}${file.path.replace(
+          'public',
+          ''
+        )}`
+      }))
+
+      const { month, day, hour, minutes } = date(product.updated_at)
+
+      product.published = {
+        day: `${day}/${month}`,
+        hour: `${hour}h${minutes}min`
+      }
+
+      product.oldPrice = formatPrice(product.old_price)
+      product.price = formatPrice(product.price)
+
+      return res.render('products/show', { product, files })
+    } catch (err) {
+      console.error(err)
+    }
   },
 
   async edit (req, res) {
-    let results = await Product.find(req.params.id)
-    const product = results.rows[0]
+    try {
+      const product = await Product.find(req.params.id)
 
-    if (!product) return res.send('Product not found')
+      if (!product) return res.send('Product not found')
 
-    product.old_price = formatPrice(product.old_price)
-    product.price = formatPrice(product.price)
+      product.old_price = formatPrice(product.old_price)
+      product.price = formatPrice(product.price)
 
-    // get categories
-    results = await Category.all()
-    const categories = results.rows
+      // get categories
+      const categories = await Category.findAll()
 
-    //get images
-    results = await Product.files(product.id)
-    let files = results.rows
-    files = files.map(file => ({
-      ...file,
-      src: `${req.protocol}://${req.headers.host}${file.path.replace(
-        'public',
-        ''
-      )}`
-    }))
+      //get images
+      let files = await Product.files(product.id)
+      files = files.map(file => ({
+        ...file,
+        src: `${req.protocol}://${req.headers.host}${file.path.replace(
+          'public',
+          ''
+        )}`
+      }))
 
-    return res.render('products/edit.njk', { product, categories, files })
+      return res.render('products/edit', { product, categories, files })
+    } catch (err) {
+      console.error(err)
+    }
   },
 
   async put (req, res) {
-    const keys = Object.keys(req.body)
-    for (key of keys) {
-      if (req.body[key] == '' && key != 'removed_files') {
-        const error = 'Preencha todos os campos'
-        return res.render(`products/edit`, { error })
+    try {
+      const keys = Object.keys(req.body)
+      for (key of keys) {
+        if (req.body[key] == '' && key != 'removed_files') {
+          const error = 'Preencha todos os campos'
+          return res.render(`products/edit`, { error })
+        }
       }
+
+      if (req.files.length != 0) {
+        const newFilesPromise = req.files.map(file =>
+          File.create({ ...file, product_id: req.body.id })
+        )
+
+        await Promise.all(newFilesPromise)
+      }
+
+      if (req.body.removed_files) {
+        const removedFiles = req.body.removed_files.split(',')
+        const lastIndex = removedFiles.length - 1
+        removedFiles.splice(lastIndex, 1)
+
+        const removedFilesPromise = removedFiles.map(id => File.delete(id))
+
+        await Promise.all(removedFilesPromise)
+      }
+
+      req.body.price = req.body.price.replace(/\D/g, '')
+      req.body.old_price = req.body.old_price.replace(/\D/g, '')
+
+      if (req.body.old_price != req.body.price) {
+        const oldProduct = await Product.find(req.body.id)
+        req.body.old_price = oldProduct.rows[0].price
+      }
+
+      await Product.update(req.body.id, {
+        category_id: req.body.category_id,
+        name: req.body.name,
+        description: req.body.description,
+        old_price: req.body.old_price,
+        price: req.body.price,
+        quantity: req.body.quantity,
+        status: req.body.status
+      })
+
+      return res.redirect(`/products/${req.body.id}`)
+    } catch (err) {
+      console.error(err)
     }
-
-    if (req.files.length != 0) {
-      const newFilesPromise = req.files.map(file =>
-        File.create({ ...file, product_id: req.body.id })
-      )
-
-      await Promise.all(newFilesPromise)
-    }
-
-    if (req.body.removed_files) {
-      
-      const removedFiles = req.body.removed_files.split(',')
-      const lastIndex = removedFiles.length - 1
-      removedFiles.splice(lastIndex, 1)
-
-      const removedFilesPromise = removedFiles.map(id => File.delete(id))
-
-      await Promise.all(removedFilesPromise)
-    }
-
-    req.body.price = req.body.price.replace(/\D/g, '')
-    req.body.old_price = req.body.old_price.replace(/\D/g, '')
-
-    if (req.body.old_price != req.body.price) {
-      const oldProduct = await Product.find(req.body.id)
-      req.body.old_price = oldProduct.rows[0].price
-    }
-
-    await Product.update(req.body)
-
-    return res.redirect(`/products/${req.body.id}`)
   },
 
   async delete (req, res) {
-    const product = await Product.find(req.body.id)
 
-    if (!product) {
-      return res.send('user not Found')
-    }
-
+    const files = await Product.files(req.body.id)
+ 
     await Product.delete(req.body.id)
+
+    files.map(file =>{
+      try{
+        unlinkSync(file.path)
+      }catch(err){
+        console.error(err)
+      }
+    })
+   
 
     return res.redirect('/products/create')
   }

@@ -1,3 +1,4 @@
+CREATE DATABASE store;
 CREATE TABLE "products" (
   "id" SERIAL PRIMARY KEY,
   "category_id" int NOT NULL,
@@ -25,12 +26,12 @@ CREATE TABLE "files" (
   "id" SERIAL PRIMARY KEY,
   "name" text,
   "path" text NOT NULL,
-  "products_id" int
+  "product_id" int
 );
 
 ALTER TABLE "products" ADD FOREIGN KEY ("category_id") REFERENCES "categories" ("id");
 
-ALTER TABLE "files" ADD FOREIGN KEY ("products_id") REFERENCES "products" ("id");
+ALTER TABLE "files" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
 
 
 CREATE TABLE "users" (
@@ -38,7 +39,7 @@ CREATE TABLE "users" (
   "name" text NOT NULL,
   "email" text UNIQUE NOT NULL,
   "password" text NOT NULL,
-  "crp_cnpj" text UNIQUE NOT NULL,
+  "cpf_cnpj" text UNIQUE NOT NULL,
   "cep" text,
   "address" text,
   "created_at" timestamp DEFAULT 'now()',
@@ -96,8 +97,9 @@ REFERENCES "users" ("id")
 ON DELETE CASCADE;
 
 ALTER TABLE "files"
-DROP CONSTRAINT files_products_id_fkey,
+DROP CONSTRAINT IF EXISTS files_products_id_fkey,
 ADD CONSTRAINT files_products_id_fkey
 FOREIGN KEY ("product_id")
 REFERENCES "products" ("id")
 ON DELETE CASCADE;
+
