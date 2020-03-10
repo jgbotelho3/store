@@ -17,17 +17,6 @@ module.exports = {
 
   async post (req, res) {
     try {
-      const keys = Object.keys(req.body)
-      let error = ''
-      for (key of keys) {
-        if (req.body[key] == '') {
-          return res.send('Preencha todos os campos')
-        }
-      }
-
-      if (req.files.length == 0)
-        return res.send('Please send at least an image')
-
       let {
         category_id,
         name,
