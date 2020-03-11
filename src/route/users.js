@@ -2,6 +2,7 @@ const express = require('express')
 const routes = express.Router()
 const SessionController = require('../app/controllers/SessionController')
 const UserController = require('../app/controllers/UserController')
+const OrderController = require('../app/controllers/OrderController')
 const UserValidator = require('../app/validators/user')
 const SessionValidator = require('../app/validators/session')
 const { onlyUsers, isLogged } = require('../app/middlewares/session')
@@ -26,5 +27,9 @@ routes.delete('/', UserController.delete)
 
 //List products by user
 routes.get('/ads', UserController.ads)
+
+//Orders
+routes.post('/orders', onlyUsers, OrderController.post)
+
 
 module.exports = routes

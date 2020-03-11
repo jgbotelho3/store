@@ -1,0 +1,28 @@
+{% extends 'layout.njk' %}
+{% import '_parts/card.njk' as cards %}
+
+{% block content %}
+
+  {% call cards.render('', 'order-error  container') %}
+
+  <div class="error-lottie"> </div>
+    <h2>Oooops, tivemos um problema...</h2>
+    <p>Não conseguimos processar seu pedido, por favor tente novamente.  </p>
+    <a href="#" onclick="history.back()"> Tente novamente</a>
+ 
+    
+  {%endcall%}
+
+<script src="/lottie.min.js"></script>
+  <script>
+  const element = document.querySelector('.error-lottie')
+
+    lottie.loadAnimation({
+        container: element,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '/3617-shopping-bag-error.json'
+    });
+  </script>
+{% endblock content %}

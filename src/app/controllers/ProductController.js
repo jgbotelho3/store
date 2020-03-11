@@ -78,8 +78,6 @@ module.exports = {
         }
       })
 
-      console.log(product)
-
       const categories = await Category.findAll()
 
       return res.render('products/edit', { product, categories})
