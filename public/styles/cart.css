@@ -1,0 +1,142 @@
+.cart{
+    max-width: 800px;
+}
+
+.cart .header{
+    display:grid;
+    grid-template-columns: 1fr 100px 100px 30px;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #777;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+}
+
+.cart .header p:nth-child(2){
+    text-align: right;
+}
+
+.cart .header p:nth-child(3){
+    text-align: center;
+}
+
+
+.cart .item{
+    display: grid;
+    grid-template-columns: 1fr 100px 100px 30px;
+    gap: 16px;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 16px 0;
+}
+
+.cart .item:hover{
+    background-color: rgba(0,0,0,.02);
+}
+
+
+.cart .item > a{
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+}
+
+.cart .item img{
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-right: 16px;
+    box-shadow: 0px 2px 4px -2px rgba(0,0,0, .4);
+    border-radius: 4px;
+}
+
+.cart .item .title{
+    color: #222;   
+}
+
+.cart .item .price{
+    text-align: right;
+    color: #555;
+}
+
+.cart .quantity-control{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart .quantity-control .quantity{
+    margin: 0 8px;
+    color: #555;
+}
+
+.cart .quantity-control i{
+    color: #555;
+}
+
+.cart .add,
+.cart .remove,
+.cart .delete{
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.cart .delete{
+    color: rgb(235, 112, 112);
+}
+
+.cart .total{
+    margin-top: 16px;
+    text-align: right;
+}
+
+.cart .total p{
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #777;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.cart .total span{
+    font-weight: bolder;
+    font-size: 22px;
+    color: #444;
+}
+
+.cart .action{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 16px;
+}
+
+.cart a.button.shop{
+    width: 240px;
+}
+
+.cart .button.order{
+    background-color: rgba(0, 122, 44, 0.822);
+}
+
+.cart .button.order:hover{
+    background-color: rgba(7, 209, 81, 0.822);
+}
+
+.cart-empty{
+    max-width: 500px;
+    text-align: center;
+}
+
+.cart-empty p{
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.cart-empty .button{
+    width: 240px;
+    margin: 0 auto;
+}
+

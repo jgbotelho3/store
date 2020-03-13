@@ -5,7 +5,7 @@ const Product = require('./src/app/models/Product')
 const File = require('./src/app/models/File')
 
 let usersIds = []
-const totalUsers = 5
+const totalUsers = 3
 let totalProducts = 10
 
 async function createUsers(){
