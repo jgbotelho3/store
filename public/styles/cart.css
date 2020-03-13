@@ -140,3 +140,34 @@
     margin: 0 auto;
 }
 
+/**==MENU==**/
+
+header div.container{
+    grid-template-columns: 220px auto 315px;
+    gap: 8px;
+}
+
+li.cart a{
+    position: relative;
+}
+
+li.cart a span{
+    background-color: red;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top:12px;
+    right:0px;
+}
+
+li.cart a:hover span{
+    background-color: #fff;
+    color: #333;
+}
+
